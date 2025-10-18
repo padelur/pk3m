@@ -1,0 +1,29 @@
+:root{--brand-green:#16a34a;--brand-green-dark:#128c40;--brand-green-700:#0f7a36;--brand-green-50:#f3faf5}
+
+/* Bootstrap variable overrides-ish */
+.btn-success{background-color:var(--brand-green);border-color:var(--brand-green-dark)}
+.btn-success:hover{background-color:var(--brand-green-dark);border-color:var(--brand-green-700)}
+.navbar-brand{color:var(--brand-green)}
+.navbar-brand:hover{color:var(--brand-green-dark)}
+.navbar-light .navbar-nav .nav-link{color:var(--brand-green)}
+.navbar-light .navbar-nav .nav-link:hover{color:var(--brand-green-dark)}
+a{color:var(--brand-green)}
+a:hover{color:var(--brand-green-dark)}
+
+/* Sections */
+.section-hero{background:linear-gradient(135deg,var(--brand-green) 0%, var(--brand-green-dark) 100%);color:#fff}
+.section-hero .lead{color:#e6ffed}
+.section-light{background:#fff}
+.section-soft{background:var(--brand-green-50)}
+.section-title{font-weight:700;color:var(--brand-green-dark)}
+.section-subtitle{color:#198754}
+
+/* Cards */
+.card{border-color:#e6f4ea}
+.card-header{background:var(--brand-green-50)}
+.badge.bg-success{background-color:var(--brand-green)!important}
+
+/* Footer */
+.site-footer{background:#0b2f1a;color:#e7f5ee}
+.site-footer a{color:#9be3b0}
+.site-footer a:hover{color:#bbf7d0}
