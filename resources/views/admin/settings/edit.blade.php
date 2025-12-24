@@ -32,6 +32,18 @@
 			<label class="form-label">WhatsApp Link</label>
 			<input type="url" name="whatsapp_link" class="form-control" value="{{ old('whatsapp_link', $setting->whatsapp_link ?? '') }}">
 		</div>
+		<div class="col-md-4">
+			<label class="form-label">Instagram URL</label>
+			<input type="url" name="instagram_url" class="form-control" value="{{ old('instagram_url', $setting->instagram_url ?? '') }}" placeholder="https://www.instagram.com/...">
+		</div>
+		<div class="col-md-4">
+			<label class="form-label">Facebook URL</label>
+			<input type="url" name="facebook_url" class="form-control" value="{{ old('facebook_url', $setting->facebook_url ?? '') }}" placeholder="https://www.facebook.com/...">
+		</div>
+		<div class="col-md-4">
+			<label class="form-label">LinkedIn URL</label>
+			<input type="url" name="linkedin_url" class="form-control" value="{{ old('linkedin_url', $setting->linkedin_url ?? '') }}" placeholder="https://www.linkedin.com/...">
+		</div>
 		<div class="col-12">
 			<label class="form-label">Alamat</label>
 			<textarea name="address" class="form-control" rows="3">{{ old('address', $setting->address ?? '') }}</textarea>

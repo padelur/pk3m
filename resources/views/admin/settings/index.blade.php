@@ -21,6 +21,9 @@
 			<dt class="col-sm-3">Email</dt><dd class="col-sm-9">{{ $setting->email ?? '-' }}</dd>
 			<dt class="col-sm-3">Telepon</dt><dd class="col-sm-9">{{ $setting->phone ?? '-' }}</dd>
 			<dt class="col-sm-3">WhatsApp</dt><dd class="col-sm-9">{{ $setting->whatsapp_link ?? '-' }}</dd>
+			<dt class="col-sm-3">Instagram</dt><dd class="col-sm-9">{{ $setting->instagram_url ?? '-' }}</dd>
+			<dt class="col-sm-3">Facebook</dt><dd class="col-sm-9">{{ $setting->facebook_url ?? '-' }}</dd>
+			<dt class="col-sm-3">LinkedIn</dt><dd class="col-sm-9">{{ $setting->linkedin_url ?? '-' }}</dd>
 			<dt class="col-sm-3">Katalog PDF</dt><dd class="col-sm-9">@if($setting && $setting->catalog_pdf_path)<a href="{{ Storage::url($setting->catalog_pdf_path) }}" target="_blank">Lihat</a>@else - @endif</dd>
 			<dt class="col-sm-3">Map Embed URL</dt><dd class="col-sm-9">{{ $setting->map_embed_url ?? '-' }}</dd>
 		</dl>

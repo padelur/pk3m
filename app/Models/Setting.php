@@ -16,6 +16,9 @@ class Setting extends Model
 		'email',
 		'phone',
 		'whatsapp_link',
+		'instagram_url',
+		'facebook_url',
+		'linkedin_url',
 		'catalog_pdf_path',
 		'map_embed_url',
 	];

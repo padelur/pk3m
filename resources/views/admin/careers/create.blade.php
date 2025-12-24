@@ -33,6 +33,11 @@
 			<input type="date" name="closing_date" class="form-control" value="{{ old('closing_date') }}">
 		</div>
 		<div class="col-12">
+			<label class="form-label">Link Perekrutan (Opsional)</label>
+			<input type="url" name="recruitment_link" class="form-control" value="{{ old('recruitment_link') }}" placeholder="https://...">
+			<div class="form-text">Link ke Google Form, LinkedIn, atau platform lain. Jika kosong, tombol akan diarahkan ke email/WA.</div>
+		</div>
+		<div class="col-12">
 			<label class="form-label">Deskripsi</label>
 			<textarea name="description" class="form-control" rows="5">{{ old('description') }}</textarea>
 		</div>

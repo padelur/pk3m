@@ -85,6 +85,65 @@
     </div>
 </div>
 
+<!-- Sprint 2 Statistics -->
+<div class="row g-4 mb-5">
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="stats-icon bg-info me-3">
+                    <i class="fas fa-truck"></i>
+                </div>
+                <div>
+                    <h3 class="stats-number">{{ $stats['total_suppliers'] }}</h3>
+                    <p class="stats-label">Supplier</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="stats-icon bg-primary me-3">
+                    <i class="fas fa-file-invoice"></i>
+                </div>
+                <div>
+                    <h3 class="stats-number">{{ $stats['total_purchase_orders'] }}</h3>
+                    <p class="stats-label">Purchase Orders</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="stats-icon bg-warning me-3">
+                    <i class="fas fa-clock"></i>
+                </div>
+                <div>
+                    <h3 class="stats-number">{{ $stats['draft_pos'] + $stats['approved_pos'] }}</h3>
+                    <p class="stats-label">PO Pending</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-3 col-md-6">
+        <div class="stats-card">
+            <div class="d-flex align-items-center">
+                <div class="stats-icon bg-danger me-3">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <div>
+                    <h3 class="stats-number">{{ $stats['low_stock_products'] }}</h3>
+                    <p class="stats-label">Stok Rendah</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <div class="row g-4">
     <!-- Recent Products -->
     <div class="col-lg-8">
@@ -197,6 +256,15 @@
                     <a href="{{ route('admin.brands.create') }}" class="btn btn-outline-primary">
                         <i class="fas fa-star me-2"></i>Tambah Brand
                     </a>
+                    <a href="{{ route('admin.suppliers.create') }}" class="btn btn-outline-info">
+                        <i class="fas fa-truck me-2"></i>Tambah Supplier
+                    </a>
+                    <a href="{{ route('admin.purchase-orders.create') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-file-invoice me-2"></i>Buat PO
+                    </a>
+                    <a href="{{ route('admin.stocks.create') }}" class="btn btn-outline-success">
+                        <i class="fas fa-box me-2"></i>Input Stok
+                    </a>
                     @if(auth()->user()->isSuperAdmin())
                     <a href="{{ route('admin.users.create') }}" class="btn btn-outline-success">
                         <i class="fas fa-user-plus me-2"></i>Tambah Admin
@@ -252,6 +320,46 @@
             </div>
         </div>
         @endif
+
+        <!-- Recent Purchase Orders (Sprint 2) -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-file-invoice me-2"></i>Purchase Order Terbaru
+                    </h5>
+                    <a href="{{ route('admin.purchase-orders.index') }}" class="btn btn-outline-primary btn-sm">
+                        <i class="fas fa-eye me-1"></i>Lihat Semua
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                @if(isset($recent_purchase_orders) && $recent_purchase_orders->count() > 0)
+                <div class="list-group list-group-flush">
+                    @foreach($recent_purchase_orders as $po)
+                    <div class="list-group-item px-0 border-0">
+                        <div class="d-flex align-items-center justify-content-between">
+                            <div>
+                                <h6 class="mb-0">{{ $po->po_number }}</h6>
+                                <small class="text-muted">{{ $po->supplier->name }}</small>
+                            </div>
+                            <div>
+                                <span class="badge bg-{{ $po->status === 'Received' ? 'success' : ($po->status === 'Approved' ? 'primary' : ($po->status === 'Sent' ? 'warning' : 'secondary')) }}">
+                                    {{ $po->status }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    @endforeach
+                </div>
+                @else
+                <div class="text-center py-3">
+                    <i class="fas fa-file-invoice fa-2x text-muted mb-2"></i>
+                    <h6 class="text-muted">Belum ada Purchase Order</h6>
+                </div>
+                @endif
+            </div>
+        </div>
     </div>
 </div>
 @endsection

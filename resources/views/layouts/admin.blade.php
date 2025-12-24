@@ -14,6 +14,9 @@
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css">
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -307,7 +310,15 @@
     <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <a href="{{ route('admin.dashboard') }}" class="sidebar-brand">
-                <i class="fas fa-heartbeat"></i>
+                @if(file_exists(public_path('images/logo.png')))
+                    <img src="{{ asset('images/logo.png') }}" alt="Logo" height="40" style="filter: brightness(0) invert(1);">
+                @elseif(file_exists(public_path('images/logo.jpg')))
+                    <img src="{{ asset('images/logo.jpg') }}" alt="Logo" height="40" style="filter: brightness(0) invert(1);">
+                @elseif($settings && $settings->logo_path)
+                    <img src="{{ Storage::url($settings->logo_path) }}" alt="Logo" height="40" style="filter: brightness(0) invert(1);">
+                @else
+                    <i class="fas fa-heartbeat"></i>
+                @endif
                 <span>Admin Panel</span>
             </a>
         </div>
@@ -321,50 +332,107 @@
                     </a>
                 </li>
 
+                <!-- MASTER DATA -->
+                <li class="nav-item mt-3">
+                    <div class="nav-link text-uppercase small fw-bold" style="opacity: 0.7; cursor: default;">
+                        <span>Master Data</span>
+                    </div>
+                </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.products.index') }}" class="nav-link {{ request()->routeIs('admin.products.*') ? 'active' : '' }}">
                         <i class="fas fa-box"></i>
                         <span>Produk</span>
                     </a>
                 </li>
-
                 <li class="nav-item">
                     <a href="{{ route('admin.categories.index') }}" class="nav-link {{ request()->routeIs('admin.categories.*') ? 'active' : '' }}">
                         <i class="fas fa-tags"></i>
                         <span>Kategori</span>
                     </a>
                 </li>
-
                 <li class="nav-item">
                     <a href="{{ route('admin.brands.index') }}" class="nav-link {{ request()->routeIs('admin.brands.*') ? 'active' : '' }}">
                         <i class="fas fa-star"></i>
                         <span>Brand</span>
                     </a>
                 </li>
-
-                @if(auth()->user()->isSuperAdmin())
                 <li class="nav-item">
-                    <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
-                        <i class="fas fa-users"></i>
-                        <span>Manajemen Admin</span>
+                    <a href="{{ route('admin.suppliers.index') }}" class="nav-link {{ request()->routeIs('admin.suppliers.*') ? 'active' : '' }}">
+                        <i class="fas fa-truck"></i>
+                        <span>Supplier</span>
                     </a>
                 </li>
-                @endif
 
+                <!-- INVENTORY SYSTEM -->
+                <li class="nav-item mt-3">
+                    <div class="nav-link text-uppercase small fw-bold" style="opacity: 0.7; cursor: default;">
+                        <span>Inventaris & Stok</span>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.purchase-orders.index') }}" class="nav-link {{ request()->routeIs('admin.purchase-orders.*') ? 'active' : '' }}">
+                        <i class="fas fa-file-invoice"></i>
+                        <span>Purchase Order</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.stocks.index') }}" class="nav-link {{ request()->routeIs('admin.stocks.index') || request()->routeIs('admin.stocks.create') || request()->routeIs('admin.stocks.show') || request()->routeIs('admin.stocks.edit') ? 'active' : '' }}">
+                        <i class="fas fa-boxes"></i>
+                        <span>Manajemen Stok</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.stocks.logs') }}" class="nav-link {{ request()->routeIs('admin.stocks.logs') ? 'active' : '' }}">
+                        <i class="fas fa-history"></i>
+                        <span>Riwayat Stok</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.stock-outs.index') }}" class="nav-link {{ request()->routeIs('admin.stock-outs.*') ? 'active' : '' }}">
+                        <i class="fas fa-arrow-up"></i>
+                        <span>Stok Keluar</span>
+                    </a>
+                </li>
+
+                <!-- COMPANY PROFILE -->
+                <li class="nav-item mt-3">
+                    <div class="nav-link text-uppercase small fw-bold" style="opacity: 0.7; cursor: default;">
+                        <span>Company Profile</span>
+                    </div>
+                </li>
                 <li class="nav-item">
                     <a href="{{ route('admin.teams.index') }}" class="nav-link {{ request()->routeIs('admin.teams.*') ? 'active' : '' }}">
                         <i class="fas fa-users"></i>
                         <span>Tim</span>
                     </a>
                 </li>
-
                 <li class="nav-item">
                     <a href="{{ route('admin.careers.index') }}" class="nav-link {{ request()->routeIs('admin.careers.*') ? 'active' : '' }}">
                         <i class="fas fa-briefcase"></i>
                         <span>Karir</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="{{ route('admin.events.index') }}" class="nav-link {{ request()->routeIs('admin.events.*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Event</span>
+                    </a>
+                </li>
 
+                <!-- SYSTEM ADMIN -->
+                 <li class="nav-item mt-3">
+                    <div class="nav-link text-uppercase small fw-bold" style="opacity: 0.7; cursor: default;">
+                        <span>System</span>
+                    </div>
+                </li>
+                @if(auth()->user()->isSuperAdmin())
+                <li class="nav-item">
+                    <a href="{{ route('admin.users.index') }}" class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
+                        <i class="fas fa-user-shield"></i>
+                        <span>Manajemen Admin</span>
+                    </a>
+                </li>
+                @endif
                 <li class="nav-item">
                     <a href="{{ route('admin.settings.index') }}" class="nav-link {{ request()->routeIs('admin.settings.*') ? 'active' : '' }}">
                         <i class="fas fa-cog"></i>
@@ -440,8 +508,15 @@
         </main>
     </div>
 
+    <!-- jQuery (required for DataTables) -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 
     <!-- Custom JS -->
     <script>
@@ -467,6 +542,6 @@
         });
     </script>
 
-    @yield('scripts')
+    @stack('scripts')
 </body>
 </html>

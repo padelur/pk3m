@@ -16,8 +16,31 @@ class HomeController extends Controller
 		$settings = Setting::first();
 		$brands = Brand::orderBy('name')->get();
 		$categories = Category::orderBy('name')->get();
-		$featuredProducts = Product::with(['brand', 'category'])->publicVisible()->latest()->take(6)->get();
-		return view('front.home', compact('settings', 'brands', 'categories', 'featuredProducts'));
+		$products = Product::publicVisible()->get();
+		
+		// Ambil 3 produk dengan kategori berbeda
+		$featuredProducts = collect();
+		$usedCategoryIds = [];
+		
+		// Ambil produk terbaru dengan kategori berbeda
+		$allProducts = Product::with(['brand', 'category'])
+			->publicVisible()
+			->latest()
+			->get();
+		
+		foreach ($allProducts as $product) {
+			if ($featuredProducts->count() >= 3) {
+				break;
+			}
+			
+			// Hanya ambil jika kategori belum digunakan dan produk memiliki kategori
+			if ($product->category_id && !in_array($product->category_id, $usedCategoryIds)) {
+				$featuredProducts->push($product);
+				$usedCategoryIds[] = $product->category_id;
+			}
+		}
+		
+		return view('front.home', compact('settings', 'brands', 'categories', 'products', 'featuredProducts'));
 	}
 
 	public function history(): View

@@ -5,7 +5,7 @@
 
 @section('content')
 <!-- Breadcrumb -->
-<nav aria-label="breadcrumb" class="py-3" style="background-color: var(--soft-green);">
+<nav aria-label="breadcrumb" class="page-breadcrumb">
     <div class="container">
         <ol class="breadcrumb mb-0">
             <li class="breadcrumb-item"><a href="{{ route('home') }}" class="text-decoration-none">Beranda</a></li>

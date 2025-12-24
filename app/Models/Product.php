@@ -42,8 +42,39 @@ class Product extends Model
 		return $this->hasMany(ProductAudit::class);
 	}
 
+	public function stockLogs(): HasMany
+	{
+		return $this->hasMany(StockLog::class);
+	}
+
+	public function purchaseOrderItems(): HasMany
+	{
+		return $this->hasMany(PurchaseOrderItem::class);
+	}
+
 	public function scopePublicVisible($query)
 	{
 		return $query->where('is_active', true)->where('stock', '>', 0);
+	}
+
+	/**
+	 * Update stock and create log
+	 */
+	public function updateStock(int $quantityChange, string $changeType, string $description = null, string $referenceNumber = null, ?int $userId = null): void
+	{
+		$stockBefore = $this->stock;
+		$this->stock += $quantityChange;
+		$this->save();
+
+		StockLog::create([
+			'product_id' => $this->id,
+			'change_type' => $changeType,
+			'quantity_change' => $quantityChange,
+			'stock_before' => $stockBefore,
+			'stock_after' => $this->stock,
+			'description' => $description,
+			'reference_number' => $referenceNumber,
+			'created_by' => $userId ?? auth()->id(),
+		]);
 	}
 }

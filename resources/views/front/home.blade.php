@@ -5,69 +5,110 @@
 
 @section('content')
 <!-- Hero Section -->
-<section class="hero-section">
+@php
+    $heroImage = null;
+    if (file_exists(public_path('images/hero-image.jpg'))) {
+        $heroImage = asset('images/hero-image.jpg');
+    } elseif (file_exists(public_path('images/hero-image.png'))) {
+        $heroImage = asset('images/hero-image.png');
+    } else {
+        $heroImage = 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80';
+    }
+@endphp
+<section class="hero-section" style="background-image: url('{{ $heroImage }}');">
+    <div class="hero-overlay"></div>
     <div class="container">
-        <div class="row align-items-center">
-            <div class="col-lg-6">
-                <h1 class="display-4 fw-bold text-success mb-3">Solution for Medical Devices</h1>
-                <p class="lead mb-4">PT. Makmur Mandiri Medika menyediakan solusi lengkap untuk kebutuhan alat medis berkualitas tinggi dengan standar internasional.</p>
-                <div class="d-flex gap-3">
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-8 text-center hero-content">
+                <h1 class="hero-title">Solution for Medical Devices</h1>
+                <p class="lead mb-4 hero-subtitle">
+                    PT. Makmur Mandiri Medika menyediakan solusi lengkap untuk kebutuhan alat medis berkualitas tinggi dengan standar internasional.
+                </p>
+                <div class="d-flex flex-wrap gap-3 justify-content-center mb-5">
                     <a href="{{ route('products.index') }}" class="btn btn-primary btn-lg">
                         <i class="fas fa-box me-2"></i>Lihat Produk
                     </a>
                     @if($settings && $settings->catalog_pdf_path)
-                        <a href="{{ Storage::url($settings->catalog_pdf_path) }}" target="_blank" class="btn btn-outline-primary btn-lg">
+                        <a href="{{ Storage::url($settings->catalog_pdf_path) }}" target="_blank" class="btn btn-outline-light btn-lg">
                             <i class="fas fa-download me-2"></i>Unduh Katalog
                         </a>
                     @endif
                 </div>
-            </div>
-            <div class="col-lg-6 text-center">
-                <img src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
-                     class="img-fluid rounded-3 shadow-lg" alt="Medical Devices" style="max-height: 400px; object-fit: cover;">
+                <div class="row g-4 justify-content-center hero-stats">
+                    <div class="col-auto">
+                        <div class="stat-card">
+                            <h3 class="stat-number">{{ $products->count() ?? 0 }}+</h3>
+                            <small class="stat-label">Produk Tersedia</small>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-card">
+                            <h3 class="stat-number">{{ $categories->count() ?? 0 }}+</h3>
+                            <small class="stat-label">Kategori Produk</small>
+                        </div>
+                    </div>
+                    <div class="col-auto">
+                        <div class="stat-card">
+                            <h3 class="stat-number">{{ $brands->count() ?? 0 }}+</h3>
+                            <small class="stat-label">Brand Terpercaya</small>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Search Section -->
-<section class="search-section">
+<section class="search-section" style="padding-top: 5rem !important; padding-bottom: 5rem !important;">
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-lg-8">
-                <h2 class="text-center mb-4">Cari Produk Medis Anda</h2>
-                <form action="{{ route('products.index') }}" method="GET" class="row g-3">
-                    <div class="col-md-8">
-                        <div class="input-group">
-                            <span class="input-group-text bg-white border-end-0">
-                                <i class="fas fa-search text-muted"></i>
-                            </span>
-                            <input type="text" name="search" class="form-control border-start-0"
-                                   placeholder="Cari produk berdasarkan nama atau kategori..."
-                                   value="{{ request('search') }}">
+            <div class="col-lg-10">
+                <div class="card border-0 shadow-lg" style="border-radius: 20px; padding: 2rem;">
+                    <h2 class="text-center mb-4" style="color: var(--primary-green); font-weight: 700;">
+                        <i class="fas fa-search me-2"></i>Cari Produk Medis Anda
+                    </h2>
+                    <form action="{{ route('products.index') }}" method="GET" class="row g-3">
+                        <div class="col-md-8">
+                            <div class="input-group" style="border-radius: 50px; overflow: hidden; box-shadow: var(--shadow-sm);">
+                                <span class="input-group-text bg-white border-0" style="padding-left: 1.5rem;">
+                                    <i class="fas fa-search text-muted"></i>
+                                </span>
+                                <input type="text" name="search" class="form-control border-0"
+                                       placeholder="Cari produk berdasarkan nama atau kategori..."
+                                       value="{{ request('search') }}"
+                                       style="padding: 1rem 1.5rem;">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <select name="category" class="form-select" id="categoryFilter">
-                            <option value="">Semua Kategori</option>
-                            @foreach($categories as $category)
-                                <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
-                                    {{ $category->name }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                </form>
+                        <div class="col-md-4">
+                            <select name="category" class="form-select" id="categoryFilter"
+                                    style="border-radius: 50px; padding: 1rem 1.5rem; box-shadow: var(--shadow-sm); border: none;">
+                                <option value="">Semua Kategori</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ request('category') == $category->id ? 'selected' : '' }}>
+                                        {{ $category->name }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="col-12 text-center">
+                            <button type="submit" class="btn btn-primary btn-lg" style="border-radius: 50px; padding: 0.75rem 3rem;">
+                                <i class="fas fa-search me-2"></i>Cari Sekarang
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
 </section>
 
 <!-- Featured Products Section -->
-<section class="py-5">
+<section class="py-6" style="background: linear-gradient(to bottom, #ffffff 0%, var(--soft-green) 100%); padding-top: 5rem !important; padding-bottom: 5rem !important;">
     <div class="container">
-        <h2 class="section-title text-center mb-5">Produk Unggulan Kami</h2>
-        <div class="row g-4">
+        <h2 class="section-title">Produk Kami</h2>
+        <p class="text-center text-muted mb-5" style="font-size: 1.1rem;">Temukan produk alat medis berkualitas tinggi untuk kebutuhan Anda</p>
+        <div class="row g-4 justify-content-center">
             @forelse($featuredProducts as $product)
             <div class="col-lg-4 col-md-6">
                 <div class="card product-card h-100">
@@ -80,27 +121,18 @@
                     @endif
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">{{ $product->name }}</h5>
-                        <p class="card-text text-muted small flex-grow-1">
-                            {{ Str::limit($product->description, 100) }}
-                        </p>
-                        @if($product->size)
+                        @if($product->category)
                             <p class="small text-muted mb-2">
-                                <i class="fas fa-ruler me-1"></i>Ukuran: {{ $product->size }}
+                                <i class="fas fa-tag me-1"></i>{{ $product->category->name }}
                             </p>
                         @endif
-                        @if($product->price)
-                            <p class="price mb-3">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
-                        @endif
+                        <p class="card-text text-muted small flex-grow-1">
+                            {{ Str::limit($product->description ?? '', 100) }}
+                        </p>
                         <div class="mt-auto">
-                            @if($product->e_catalog_url)
-                                <a href="{{ $product->e_catalog_url }}" target="_blank" class="btn btn-success w-100">
-                                    <i class="fas fa-shopping-cart me-2"></i>Beli Sekarang
-                                </a>
-                            @else
-                                <a href="{{ route('products.show', $product->slug) }}" class="btn btn-outline-primary w-100">
-                                    <i class="fas fa-eye me-2"></i>Lihat Detail
-                                </a>
-                            @endif
+                            <a href="{{ route('products.show', $product->slug) }}" class="btn btn-outline-primary w-100">
+                                <i class="fas fa-eye me-2"></i>Lihat Detail
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -125,53 +157,24 @@
     </div>
 </section>
 
-<div class="section-soft py-4">
-	<h2 class="section-title h4 mb-3">Katalog Produk</h2>
-	<div class="row g-3">
-		<div class="col-md-6">
-			<div class="card h-100">
-				<div class="card-body d-flex align-items-center justify-content-between">
-					<div>
-						<div class="h6 mb-1">Katalog Produk Instrument PT3M 2025</div>
-						<div class="text-muted small">PDF</div>
-					</div>
-					@if($settings && $settings->catalog_pdf_path)
-						<a href="{{ Storage::url($settings->catalog_pdf_path) }}" class="btn btn-success" target="_blank">Unduh</a>
-					@else
-						<a href="#" class="btn btn-success disabled">Tidak tersedia</a>
-					@endif
-				</div>
-			</div>
-		</div>
-		<div class="col-md-6">
-			<div class="card h-100">
-				<div class="card-body d-flex align-items-center justify-content-between">
-					<div>
-						<div class="h6 mb-1">Katalog Produk Consumable PT3M 2024</div>
-						<div class="text-muted small">PDF</div>
-					</div>
-					<a href="#" class="btn btn-success disabled">Segera</a>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
+
 
 <!-- Brands Section -->
-<section class="py-5" style="background-color: var(--soft-green);">
+<section class="py-6" style="background: linear-gradient(135deg, var(--soft-green) 0%, #ffffff 100%); padding-top: 5rem !important; padding-bottom: 5rem !important;">
     <div class="container">
-        <h2 class="section-title text-center mb-5">Brand Terpercaya Kami</h2>
-        <div class="row g-4">
+        <h2 class="section-title">Brand Kami</h2>
+        <p class="text-center text-muted mb-5" style="font-size: 1.1rem;">Bekerja sama dengan brand terkemuka di industri medis</p>
+        <div class="row g-4 justify-content-center">
             @foreach($brands as $brand)
             <div class="col-lg-3 col-md-4 col-6">
-                <div class="card h-100 text-center p-4 border-0" style="background-color: white;">
+                <div class="card h-100 text-center p-4 border-0 shadow-sm" style="background-color: white; border-radius: 15px;">
                     @if($brand->logo_path)
-                        <img src="{{ Storage::url($brand->logo_path) }}" class="img-fluid mb-3 brand-logo" alt="{{ $brand->name }}" style="max-height: 80px;">
+                        <img src="{{ Storage::url($brand->logo_path) }}" class="img-fluid mb-3" alt="{{ $brand->name }}" style="max-height: 100px; transition: all 0.3s ease; object-fit: contain; filter: none !important;">
                     @else
-                        <div class="fw-semibold text-success mb-3">{{ $brand->name }}</div>
+                        <div class="fw-bold text-success mb-3" style="font-size: 1.1rem;">{{ $brand->name }}</div>
                     @endif
                     @if($brand->description)
-                        <p class="small text-muted">{{ Str::limit($brand->description, 80) }}</p>
+                        <p class="small text-muted mb-0">{{ Str::limit($brand->description, 80) }}</p>
                     @endif
                 </div>
             </div>
@@ -181,12 +184,12 @@
 </section>
 
 <!-- Contact Section -->
-<section class="py-5">
+<section class="py-6" style="background: linear-gradient(to bottom, #ffffff 0%, var(--soft-green) 100%); padding-top: 5rem !important; padding-bottom: 5rem !important;">
     <div class="container">
-        <div class="row">
+        <h2 class="section-title">Hubungi Kami</h2>
+        <div class="row align-items-center">
             <div class="col-lg-6">
-                <h2 class="section-title mb-4">Hubungi Kami</h2>
-                <p class="lead mb-4">Kami siap membantu kebutuhan alat medis Anda dengan solusi terbaik.</p>
+                <p class="lead mb-4" style="font-size: 1.2rem; color: var(--text-dark);">Kami siap membantu kebutuhan alat medis Anda dengan solusi terbaik.</p>
 
                 <div class="row g-3">
                     @if($settings && $settings->address)

@@ -5,17 +5,22 @@
 
 @section('content')
 <!-- Page Header -->
-<section class="py-5" style="background-color: var(--soft-green);">
+<section class="page-header-section">
     <div class="container">
         <div class="row align-items-center">
             <div class="col-lg-8">
-                <h1 class="display-5 fw-bold text-success mb-3">Produk Kami</h1>
-                <p class="lead mb-0">Solusi lengkap untuk kebutuhan alat medis berkualitas tinggi</p>
+                <h1 class="page-header-title">Produk Kami</h1>
+                <p class="page-header-subtitle">Solusi lengkap untuk kebutuhan alat medis berkualitas tinggi</p>
             </div>
-            <div class="col-lg-4 text-end">
-                <div class="text-muted">
-                    <i class="fas fa-box me-2"></i>
-                    {{ $products->total() }} Produk Tersedia
+            <div class="col-lg-4 text-lg-end mt-3 mt-lg-0">
+                <div class="page-header-stat-card">
+                    <div class="d-flex align-items-center justify-content-lg-end">
+                        <i class="fas fa-box fa-2x me-3"></i>
+                        <div>
+                            <div class="stat-number">{{ $products->total() }}</div>
+                            <small class="stat-label">Produk Tersedia</small>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -23,20 +28,22 @@
 </section>
 
 <!-- Search and Filter Section -->
-<section class="py-4 bg-white">
+<section class="py-4" style="background: white;">
     <div class="container">
+        <div class="card border-0 shadow-sm" style="border-radius: 20px; padding: 2rem;">
         <form method="GET" class="row g-3">
             <div class="col-md-4">
-                <div class="input-group">
-                    <span class="input-group-text bg-white border-end-0">
+                    <div class="input-group" style="border-radius: 50px; overflow: hidden; box-shadow: var(--shadow-sm);">
+                        <span class="input-group-text bg-white border-0" style="padding-left: 1.5rem;">
                         <i class="fas fa-search text-muted"></i>
                     </span>
-                    <input type="text" name="search" class="form-control border-start-0"
-                           placeholder="Cari produk..." value="{{ $search }}">
+                        <input type="text" name="search" class="form-control border-0"
+                               placeholder="Cari produk..." value="{{ $search }}"
+                               style="padding: 1rem 1.5rem;">
                 </div>
             </div>
             <div class="col-md-3">
-                <select name="category" class="form-select">
+                    <select name="category" class="form-select" style="border-radius: 50px; padding: 1rem 1.5rem; box-shadow: var(--shadow-sm); border: none;">
                     <option value="">Semua Kategori</option>
                     @foreach($categories as $category)
                         <option value="{{ $category->id }}" {{ $categoryId == $category->id ? 'selected' : '' }}>
@@ -46,7 +53,7 @@
                 </select>
             </div>
             <div class="col-md-3">
-                <select name="brand" class="form-select">
+                    <select name="brand" class="form-select" style="border-radius: 50px; padding: 1rem 1.5rem; box-shadow: var(--shadow-sm); border: none;">
                     <option value="">Semua Brand</option>
                     @foreach($brands as $brand)
                         <option value="{{ $brand->slug }}" {{ $brandSlug == $brand->slug ? 'selected' : '' }}>
@@ -56,54 +63,54 @@
                 </select>
             </div>
             <div class="col-md-2">
-                <div class="d-grid gap-2">
-                    <button type="submit" class="btn btn-primary">
+                    <button type="submit" class="btn btn-primary w-100" style="border-radius: 50px; padding: 1rem;">
                         <i class="fas fa-search me-1"></i>Cari
                     </button>
-                </div>
             </div>
         </form>
 
         @if($search || $categoryId || $brandSlug)
-        <div class="mt-3">
-            <div class="d-flex flex-wrap gap-2">
+            <div class="mt-3 pt-3 border-top">
+                <div class="d-flex flex-wrap gap-2 align-items-center">
+                    <small class="text-muted me-2">Filter aktif:</small>
                 @if($search)
-                    <span class="badge bg-primary">
+                        <span class="badge bg-primary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
                         Pencarian: "{{ $search }}"
-                        <a href="{{ request()->fullUrlWithQuery(['search' => null]) }}" class="text-white ms-1">
+                            <a href="{{ request()->fullUrlWithQuery(['search' => null]) }}" class="text-white ms-2" style="text-decoration: none;">
                             <i class="fas fa-times"></i>
                         </a>
                     </span>
                 @endif
                 @if($categoryId)
                     @php $selectedCategory = $categories->firstWhere('id', $categoryId) @endphp
-                    <span class="badge bg-success">
+                        <span class="badge bg-success" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
                         Kategori: {{ $selectedCategory->name }}
-                        <a href="{{ request()->fullUrlWithQuery(['category' => null]) }}" class="text-white ms-1">
+                            <a href="{{ request()->fullUrlWithQuery(['category' => null]) }}" class="text-white ms-2" style="text-decoration: none;">
                             <i class="fas fa-times"></i>
                         </a>
                     </span>
                 @endif
                 @if($brandSlug)
                     @php $selectedBrand = $brands->firstWhere('slug', $brandSlug) @endphp
-                    <span class="badge bg-info">
+                        <span class="badge" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); padding: 0.5rem 1rem; font-size: 0.9rem;">
                         Brand: {{ $selectedBrand->name }}
-                        <a href="{{ request()->fullUrlWithQuery(['brand' => null]) }}" class="text-white ms-1">
+                            <a href="{{ request()->fullUrlWithQuery(['brand' => null]) }}" class="text-white ms-2" style="text-decoration: none;">
                             <i class="fas fa-times"></i>
                         </a>
                     </span>
                 @endif
-                <a href="{{ route('products.index') }}" class="btn btn-outline-secondary btn-sm">
+                    <a href="{{ route('products.index') }}" class="btn btn-outline-secondary btn-sm" style="border-radius: 50px;">
                     <i class="fas fa-refresh me-1"></i>Reset Filter
                 </a>
             </div>
         </div>
         @endif
+        </div>
     </div>
 </section>
 
 <!-- Products Grid -->
-<section class="py-5">
+<section class="py-6" style="padding-top: 5rem !important; padding-bottom: 5rem !important;">
     <div class="container">
         @if($products->count() > 0)
         <div class="row g-4">

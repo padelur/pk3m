@@ -22,6 +22,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_active',
+        'permissions',
     ];
 
     /**
@@ -44,6 +46,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
+            'permissions' => 'array',
         ];
     }
 
@@ -61,5 +65,51 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    /**
+     * Check if user is active
+     * Super Admin selalu aktif, bahkan jika is_active NULL atau false
+     */
+    public function isActive(): bool
+    {
+        // Super Admin selalu aktif
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+        
+        // Untuk admin biasa, cek is_active
+        // Jika NULL (user lama), anggap sebagai aktif
+        return $this->is_active !== false;
+    }
+
+    /**
+     * Check if user has permission
+     */
+    public function hasPermission(string $permission): bool
+    {
+        if ($this->isSuperAdmin()) {
+            return true;
+        }
+
+        $permissions = $this->permissions ?? [];
+        return in_array($permission, $permissions);
+    }
+
+    /**
+     * Get all permissions
+     */
+    public function getPermissions(): array
+    {
+        return $this->permissions ?? [];
+    }
+
+    /**
+     * Set permissions
+     */
+    public function setPermissions(array $permissions): void
+    {
+        $this->permissions = $permissions;
+        $this->save();
     }
 }

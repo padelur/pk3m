@@ -3,12 +3,14 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Admin\Traits\ChecksPermissions;
 use App\Models\Brand;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductAudit;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -16,14 +18,95 @@ use Illuminate\View\View;
 
 class ProductController extends Controller
 {
+	use ChecksPermissions;
+
 	public function index(): View
 	{
-		$products = Product::with(['brand','category'])->orderByDesc('id')->paginate(20);
-		return view('admin.products.index', compact('products'));
+		$this->checkPermission('products.view');
+		return view('admin.products.index');
+	}
+
+	public function datatable(Request $request): JsonResponse
+	{
+		$this->checkPermission('products.view');
+
+		$columns = [
+			0 => 'products.id',
+			1 => 'products.name',
+			2 => 'brands.name',
+			3 => 'categories.name',
+			4 => 'products.price',
+			5 => 'products.stock',
+			6 => 'products.is_active',
+		];
+
+		$baseQuery = Product::query()
+			->leftJoin('brands', 'products.brand_id', '=', 'brands.id')
+			->leftJoin('categories', 'products.category_id', '=', 'categories.id')
+			->select(
+				'products.*',
+				'brands.name as brand_name',
+				'categories.name as category_name'
+			);
+
+		$totalRecords = (clone $baseQuery)->count();
+
+		// Filtering
+		$searchValue = $request->input('search.value');
+		if ($searchValue) {
+			$baseQuery->where(function ($q) use ($searchValue) {
+				$q->where('products.name', 'like', "%{$searchValue}%")
+					->orWhere('categories.name', 'like', "%{$searchValue}%")
+					->orWhere('products.description', 'like', "%{$searchValue}%")
+					->orWhereRaw('CAST(products.price AS CHAR) LIKE ?', ["%{$searchValue}%"]);
+			});
+		}
+
+		$filteredRecords = (clone $baseQuery)->count();
+
+		// Ordering
+		$orderColumnIndex = (int) $request->input('order.0.column', 0);
+		$orderDir = $request->input('order.0.dir', 'desc') === 'asc' ? 'asc' : 'desc';
+		$orderColumn = $columns[$orderColumnIndex] ?? 'products.id';
+		$baseQuery->orderBy($orderColumn, $orderDir);
+
+		// Paging
+		$start = (int) $request->input('start', 0);
+		$length = (int) $request->input('length', 10);
+		if ($length > 0) {
+			$baseQuery->skip($start)->take($length);
+		}
+
+		$products = $baseQuery->get();
+
+		$data = [];
+		$rowNumber = $start + 1; // Start numbering from current page offset
+		foreach ($products as $product) {
+			$actions = view('admin.products.partials.actions', ['product' => $product])->render();
+
+			$data[] = [
+				$rowNumber++, // Sequential row number instead of ID
+				e($product->name),
+				e($product->brand_name ?? '-'),
+				e($product->category_name ?? '-'),
+				$product->price !== null ? 'Rp ' . number_format($product->price, 0, ',', '.') : '-',
+				$product->stock,
+				$product->is_active ? '<span class="badge bg-success">Aktif</span>' : '<span class="badge bg-secondary">Nonaktif</span>',
+				$actions,
+			];
+		}
+
+		return response()->json([
+			'draw' => (int) $request->input('draw'),
+			'recordsTotal' => $totalRecords,
+			'recordsFiltered' => $filteredRecords,
+			'data' => $data,
+		]);
 	}
 
 	public function create(): View
 	{
+		$this->checkPermission('products.create');
 		$brands = Brand::orderBy('name')->get();
 		$categories = Category::orderBy('name')->get();
 		return view('admin.products.create', compact('brands','categories'));
@@ -31,6 +114,7 @@ class ProductController extends Controller
 
 	public function store(Request $request): RedirectResponse
 	{
+		$this->checkPermission('products.create');
 		$validated = $request->validate([
 			'name' => ['required','string','max:255'],
 			'brand_id' => ['required','exists:brands,id'],
@@ -69,6 +153,7 @@ class ProductController extends Controller
 
 	public function edit(Product $product): View
 	{
+		$this->checkPermission('products.edit');
 		$brands = Brand::orderBy('name')->get();
 		$categories = Category::orderBy('name')->get();
 		return view('admin.products.edit', compact('product','brands','categories'));
@@ -76,6 +161,7 @@ class ProductController extends Controller
 
 	public function update(Request $request, Product $product): RedirectResponse
 	{
+		$this->checkPermission('products.edit');
 		$validated = $request->validate([
 			'name' => ['required','string','max:255'],
 			'brand_id' => ['required','exists:brands,id'],
@@ -120,6 +206,7 @@ class ProductController extends Controller
 
 	public function destroy(Product $product): RedirectResponse
 	{
+		$this->checkPermission('products.delete');
 		$old = $product->toArray();
 		if ($product->image_path) {
 			Storage::disk('public')->delete($product->image_path);
@@ -136,6 +223,7 @@ class ProductController extends Controller
 
 	public function history(Product $product): View
 	{
+		$this->checkPermission('products.view');
 		$auditLogs = $product->audits()->with('user')->orderByDesc('created_at')->paginate(30);
 		return view('admin.products.history', compact('product','auditLogs'));
 	}

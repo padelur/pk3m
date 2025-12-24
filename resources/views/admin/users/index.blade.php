@@ -7,75 +7,56 @@
 <div class="d-flex justify-content-between align-items-center mb-4">
     <div>
         <h2 class="mb-1">Manajemen Admin</h2>
-        <p class="text-muted mb-0">Kelola akun admin dan super admin</p>
+        <p class="text-muted mb-0">Kelola aku administrator sistem</p>
     </div>
     <a href="{{ route('admin.users.create') }}" class="btn btn-primary">
         <i class="fas fa-plus me-2"></i>Tambah Admin
     </a>
 </div>
 
-
 <div class="card">
     <div class="card-body">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped mb-0" id="usersTable">
                 <thead>
                     <tr>
                         <th>No</th>
                         <th>Nama</th>
                         <th>Email</th>
                         <th>Role</th>
-                        <th>Tanggal Dibuat</th>
-                        <th>Aksi</th>
+                        <th>Status</th>
+                        <th width="200">Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse($users as $index => $user)
-                    <tr>
-                        <td>{{ $users->firstItem() + $index }}</td>
-                        <td>{{ $user->name }}</td>
-                        <td>{{ $user->email }}</td>
-                        <td>
-                            <span class="badge bg-{{ $user->isSuperAdmin() ? 'danger' : 'primary' }}">
-                                {{ $user->isSuperAdmin() ? 'Super Admin' : 'Admin' }}
-                            </span>
-                        </td>
-                        <td>{{ $user->created_at->format('d/m/Y H:i') }}</td>
-                        <td>
-                            <div class="btn-group" role="group">
-                                <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-outline-info">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-outline-warning">
-                                    <i class="fas fa-edit"></i>
-                                </a>
-                                @if(!$user->isSuperAdmin())
-                                <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline"
-                                      onsubmit="return confirm('Apakah Anda yakin ingin menghapus admin ini?')">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                                @endif
-                            </div>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="6" class="text-center">Tidak ada data admin</td>
-                    </tr>
-                    @endforelse
                 </tbody>
             </table>
         </div>
-
-        @if($users->hasPages())
-        <div class="d-flex justify-content-center">
-            {{ $users->links() }}
-        </div>
-        @endif
     </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    $('#usersTable').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: {
+            url: "{{ route('admin.users.datatable') }}",
+            type: 'GET',
+        },
+        columns: [
+            { data: 0, name: 'row_number', orderable: false, searchable: false },
+            { data: 1, name: 'name', orderable: true, searchable: true },
+            { data: 2, name: 'email', orderable: true, searchable: true },
+            { data: 3, name: 'role', orderable: true, searchable: true },
+            { data: 4, name: 'is_active', orderable: true, searchable: false },
+            { data: 5, name: 'actions', orderable: false, searchable: false }
+        ],
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]] // Show All Option
+    });
+});
+</script>
+@endpush

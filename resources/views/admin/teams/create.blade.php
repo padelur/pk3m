@@ -22,9 +22,15 @@
 			@error('name')<div class="text-danger small">{{ $message }}</div>@enderror
 		</div>
 		<div class="col-md-6">
-			<label class="form-label">Jabatan</label>
-			<input type="text" name="position" class="form-control" value="{{ old('position') }}" required>
-			@error('position')<div class="text-danger small">{{ $message }}</div>@enderror
+			<label class="form-label">Divisi</label>
+			<select name="division" class="form-select" required>
+				<option value="">-- Pilih Divisi --</option>
+				<option value="Manajemen" {{ old('division') == 'Manajemen' ? 'selected' : '' }}>Manajemen</option>
+				<option value="Marketing Executive" {{ old('division') == 'Marketing Executive' ? 'selected' : '' }}>Marketing Executive</option>
+				<option value="Back Office" {{ old('division') == 'Back Office' ? 'selected' : '' }}>Back Office</option>
+				<option value="Head Support" {{ old('division') == 'Head Support' ? 'selected' : '' }}>Head Support</option>
+			</select>
+			@error('division')<div class="text-danger small">{{ $message }}</div>@enderror
 		</div>
 		<div class="col-12">
 			<label class="form-label">Deskripsi</label>

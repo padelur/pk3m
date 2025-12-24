@@ -12,7 +12,7 @@ class Team extends Model
 
 	protected $fillable = [
 		'name',
-		'position',
+		'division',
 		'description',
 		'photo_path',
 	];

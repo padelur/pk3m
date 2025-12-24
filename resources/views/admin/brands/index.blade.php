@@ -13,35 +13,48 @@
         <i class="fas fa-plus me-2"></i>Tambah Brand
     </a>
 </div>
+
 <div class="card">
-	<div class="table-responsive">
-		<table class="table table-striped mb-0">
-			<thead><tr><th>#</th><th>Nama</th><th>Slug</th><th>Logo</th><th width="200">Aksi</th></tr></thead>
-			<tbody>
-				@foreach($brands as $brand)
-				<tr>
-					<td>{{ $brand->id }}</td>
-					<td>{{ $brand->name }}</td>
-					<td>{{ $brand->slug }}</td>
-					<td>@if($brand->logo_path)<img src="{{ Storage::url($brand->logo_path) }}" alt="logo" style="height:32px">@endif</td>
-					<td>
-						<div class="btn-group" role="group">
-							<a href="{{ route('admin.brands.edit', $brand) }}" class="btn btn-sm btn-warning">
-								<i class="fas fa-edit"></i>
-							</a>
-							<form method="post" action="{{ route('admin.brands.destroy', $brand) }}" class="d-inline" onsubmit="return confirm('Hapus brand ini?')">
-								@csrf @method('DELETE')
-								<button class="btn btn-sm btn-danger">
-									<i class="fas fa-trash"></i>
-								</button>
-							</form>
-						</div>
-					</td>
-				</tr>
-				@endforeach
-			</tbody>
-		</table>
-	</div>
-	<div class="card-footer">{{ $brands->links() }}</div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped mb-0" id="brandsTable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Slug</th>
+                        <th>Logo</th>
+                        <th width="200">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    $('#brandsTable').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: {
+            url: "{{ route('admin.brands.datatable') }}",
+            type: 'GET',
+        },
+        columns: [
+            { data: 0, name: 'row_number', orderable: false, searchable: false },
+            { data: 1, name: 'name', orderable: true, searchable: true },
+            { data: 2, name: 'slug', orderable: true, searchable: true },
+            { data: 3, name: 'logo_path', orderable: false, searchable: false },
+            { data: 4, name: 'actions', orderable: false, searchable: false }
+        ],
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]] // Show All Option
+    });
+});
+</script>
+@endpush

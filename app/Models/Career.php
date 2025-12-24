@@ -16,5 +16,6 @@ class Career extends Model
 		'requirements',
 		'status',
 		'closing_date',
+		'recruitment_link',
 	];
 }

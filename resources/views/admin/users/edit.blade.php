@@ -49,6 +49,17 @@
         <input type="password" name="password_confirmation" id="password_confirmation" class="form-control">
     </div>
 
+    @if(!$user->isSuperAdmin())
+    <div class="mb-3">
+        <div class="form-check">
+            <input type="checkbox" name="is_active" id="is_active" class="form-check-input" value="1"
+                   {{ old('is_active', $user->is_active) ? 'checked' : '' }}>
+            <label for="is_active" class="form-check-label">Aktif</label>
+        </div>
+        <small class="text-muted">Nonaktifkan untuk mencegah admin login</small>
+    </div>
+    @endif
+
     <div class="d-flex gap-2">
         <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Batal</a>
         <button type="submit" class="btn btn-primary">Simpan Perubahan</button>

@@ -15,21 +15,27 @@ class SuperAdminSeeder extends Seeder
     public function run(): void
     {
         // Create Super Admin
-        User::create([
+        User::updateOrCreate(
+            ['email' => 'superadmin@makmurmandirimedika.com'],
+            [
             'name' => 'Super Admin',
-            'email' => 'superadmin@makmurmandirimedika.com',
             'password' => Hash::make('password123'),
             'role' => 'super_admin',
+                'is_active' => true,
             'email_verified_at' => now(),
-        ]);
+            ]
+        );
 
         // Create sample Admin
-        User::create([
+        User::updateOrCreate(
+            ['email' => 'admin@makmurmandirimedika.com'],
+            [
             'name' => 'Admin',
-            'email' => 'admin@makmurmandirimedika.com',
             'password' => Hash::make('password123'),
             'role' => 'admin',
+                'is_active' => true,
             'email_verified_at' => now(),
-        ]);
+            ]
+        );
     }
 }

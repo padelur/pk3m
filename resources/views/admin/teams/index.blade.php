@@ -13,35 +13,48 @@
         <i class="fas fa-plus me-2"></i>Tambah Anggota
     </a>
 </div>
+
 <div class="card">
-	<div class="table-responsive">
-		<table class="table table-striped mb-0">
-			<thead><tr><th>#</th><th>Nama</th><th>Jabatan</th><th>Foto</th><th width="200">Aksi</th></tr></thead>
-			<tbody>
-				@foreach($teams as $m)
-				<tr>
-					<td>{{ $m->id }}</td>
-					<td>{{ $m->name }}</td>
-					<td>{{ $m->position }}</td>
-					<td>@if($m->photo_path)<img src="{{ Storage::url($m->photo_path) }}" alt="foto" style="height:32px">@endif</td>
-					<td>
-						<div class="btn-group" role="group">
-							<a href="{{ route('admin.teams.edit', $m) }}" class="btn btn-sm btn-warning">
-								<i class="fas fa-edit"></i>
-							</a>
-							<form method="post" action="{{ route('admin.teams.destroy', $m) }}" class="d-inline" onsubmit="return confirm('Hapus anggota ini?')">
-								@csrf @method('DELETE')
-								<button class="btn btn-sm btn-danger">
-									<i class="fas fa-trash"></i>
-								</button>
-							</form>
-						</div>
-					</td>
-				</tr>
-				@endforeach
-			</tbody>
-		</table>
-	</div>
-	<div class="card-footer">{{ $teams->links() }}</div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-striped mb-0" id="teamsTable">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Nama</th>
+                        <th>Divisi</th>
+                        <th>Foto</th>
+                        <th width="200">Aksi</th>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    $('#teamsTable').DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        ajax: {
+            url: "{{ route('admin.teams.datatable') }}",
+            type: 'GET',
+        },
+        columns: [
+            { data: 0, name: 'row_number', orderable: false, searchable: false },
+            { data: 1, name: 'name', orderable: true, searchable: true },
+            { data: 2, name: 'division', orderable: true, searchable: true },
+            { data: 3, name: 'photo_path', orderable: false, searchable: false },
+            { data: 4, name: 'actions', orderable: false, searchable: false }
+        ],
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]] // Show All Option
+    });
+});
+</script>
+@endpush
